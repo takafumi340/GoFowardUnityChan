@@ -22,11 +22,18 @@ public class UnityChanController : MonoBehaviour
     //ゲームオーバーになる位置
     private float deadLine = -9;
 
+    //左方向の移動範囲の最小値
+    [SerializeField]private float minX = -10f;
+
+    //右方向の移動範囲の最大値
+    [SerializeField] private float maxX = -2f;
+
     // Start is called before the first frame update
     void Start()
     {
         //アニメータのコンポーネントを取得する
         this.animator = GetComponent<Animator>();
+
         //Rigidbody2Dのコンポーネントを取得する
         this.rigid2D = GetComponent<Rigidbody2D>();
     }
@@ -60,10 +67,40 @@ public class UnityChanController : MonoBehaviour
             }
         }
 
+        //右方向への移動
+        if(Input.GetKey(KeyCode.D) || Input.GetKey(KeyCode.RightArrow))
+        {
+            Vector2 pos = transform.position;
+            pos.x += 0.008f;
+            transform.position = pos;
+        }
+        //左方向への移動
+        else if (Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.LeftArrow))
+        {
+            Vector2 pos = transform.position;
+            pos.x -= 0.008f;
+            transform.position = pos;
+        }
+
+        //左方向の移動範囲制限
+        if (transform.position.x < minX)
+        {
+            Vector3 range = transform.position;
+            range.x = minX;
+            transform.position = range;
+        }
+        //右方向の移動範囲制限
+        else if (transform.position.x > maxX)
+        {
+            Vector3 range = transform.position;
+            range.x = maxX;
+            transform.position = range;
+        }
+
         //デッドラインを超えた場合ゲームオーバーにする
         if (transform.position.x < this.deadLine)
         {
-            //UIControllerのGameOver関数を呼び出して画面上に「GameOver」と表示する
+            //UIControllerのGameOver関数を呼び出して画面上に「GameOver」と「GoToGameTitle」を表示する
             GameObject.Find("Canvas").GetComponent<UIController>().GameOver();
 
             //ユニティちゃんを破棄する

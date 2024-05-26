@@ -1,32 +1,38 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using UnityEngine.UI;
 
 public class UIController : MonoBehaviour
 {
-    // ゲームオーバーテキスト
+    //ゲームオーバーテキスト
     private GameObject gameOverText;
 
-    // 走行距離テキスト
+    //走行距離テキスト
     private GameObject runLengthText;
 
-    // 走った距離
+    //ゲームタイトルへ戻るボタン
+    public GameObject gotoGameTitleButton;
+
+    //走った距離
     private float len = 0;
 
-    // 走る速度
+    //走る速度
     private float speed = 5f;
 
-    // ゲームオーバーの判定
+    //ゲームオーバーの判定
     private bool isGameOver = false;
 
-    // Start is called before the first frame update
+    //Start is called before the first frame update
     void Start()
     {
-        // シーンビューからオブジェクトの実体を検索する
+        //シーンビューからオブジェクトの実体を検索する
         this.gameOverText = GameObject.Find("GameOver");
         this.runLengthText = GameObject.Find("RunLength");
+
+        //ゲームタイトルへ戻るボタンを非表示
+        gotoGameTitleButton.gameObject.SetActive(false);
     }
 
     // Update is called once per frame
@@ -34,29 +40,31 @@ public class UIController : MonoBehaviour
     {
         if(this.isGameOver == false)
         {
-            // 走った距離を更新する
+            //走った距離を更新する
             this.len += this.speed * Time.deltaTime;
 
-            // 走った距離を表示する
+            //走った距離を表示する
             this.runLengthText.GetComponent<Text>().text = "Distance:  " + len.ToString("F2") + "m";
-        }
-
-        //ゲームオーバーになった場合
-        if(this.isGameOver == true)
-        {
-            //クリックされたらシーンをロードする
-            if (Input.GetMouseButtonDown(0))
-            {
-                //SampleSceneを読み込む
-                SceneManager.LoadScene("SampleScene");
-            }
         }
     }
 
     public void GameOver()
     {
-        // ゲームオーバーになったときに、画面上にゲームオーバを表示する
-        this.gameOverText.GetComponent<Text>().text = "Game Over";
         this.isGameOver = true;
+
+        //ゲームオーバーになったときに、画面上にゲームオーバーを表示する
+        this.gameOverText.GetComponent<Text>().text = "Game Over";
+
+        //ゲームタイトルへ戻るボタンを表示
+        gotoGameTitleButton.gameObject.SetActive(true);
+
+        //ボタンを押したらGameTitle関数を実行する
+        gotoGameTitleButton.GetComponent<Button>().onClick.AddListener(GameTitle); 
+    }
+
+    void GameTitle()
+    {
+        //ゲームタイトルシーンへ移動する
+        SceneManager.LoadScene("GameTitleScene");
     }
 }
